@@ -1,0 +1,18 @@
+# --- Production pipeline (src/) ---
+pyspark>=3.4          # the pipeline engine: distributed clean + feature engineering (steps 1-2)
+pandas>=2.0           # inside applyInPandas, and for the one-row-per-product model table
+numpy>=1.24
+scikit-learn>=1.3     # scaling, PCA, K-Means, and the scores used to check the groups
+scipy>=1.10           # significance tests for the product-pair (cross-price) analysis
+pyyaml>=6.0           # reading config.yaml
+pyarrow>=12.0         # Arrow transport for Spark <-> pandas (applyInPandas / toPandas)
+
+# --- Tests ---
+pytest>=7.0           # the suite in tests/ — the Spark tests skip themselves if pyspark is absent
+
+# --- Analysis notebook only (notebooks/product_segmentation.ipynb) ---
+# The notebook is pandas by design — it's where the analysis was worked out and explained.
+# The production pipeline does not import these.
+networkx>=3.0         # the cross-price network of which products push each other around
+matplotlib>=3.7
+seaborn>=0.12

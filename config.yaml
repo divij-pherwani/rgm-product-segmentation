@@ -1,0 +1,52 @@
+# Everything the pipeline needs to know, in one place.
+# Nothing is hard-coded in the code — if you want to change something, change it here.
+# The values below reproduce the analysis notebook exactly (353 products, 3 groups).
+
+data:
+  input: data/ECON_POS.csv
+  output: output/
+
+# --- Cleaning (src/clean.py) ---
+cleaning:
+  # Rows implying a price below this (per pack) are placeholders — see notebook section 1.1.
+  # The price histogram has a clear left hump of ~2p rows; anywhere in the gap gives the same cut.
+  minimum_price_per_pack: 0.10
+
+  # A product needs at least this much history before it can be judged. Under a quarter, you
+  # can't see a trend or a season. 13 products fall under this and are set aside, not deleted.
+  minimum_weeks_of_history: 13
+
+# --- Building the features (src/features.py) ---
+features:
+  # Shelf presence is smoothed over this many weeks before we divide by it, so a one-week blip
+  # doesn't distort the sales rate.
+  shelf_smoothing_weeks: 9
+
+  # A product needs this many weeks before growth/shelf-trend/seasonality are measured at all.
+  minimum_weeks_for_trend: 8
+
+  # Promo-lift compares a product's heaviest promo weeks with its quietest; below this many
+  # weeks there aren't enough of either to compare, so it's left blank (35 products on the data).
+  minimum_weeks_for_promo_lift: 26
+
+# --- Grouping the products (src/group.py) ---
+grouping:
+  search_between: [3, 10]     # how many groups to try. Starts at 3: K=2 puts 82% in one bucket.
+  keep_variation: 0.90        # how much of the information PCA should keep (-> 5 components)
+  restarts: 20                # K-Means starts randomly, so run it 20 times and keep the best
+  random_seed: 42             # so the results are the same every time
+
+# --- Deciding whether to trust the result (src/check.py) ---
+checks:
+  # Re-run on random samples of the products. If the groups don't survive that, they aren't real
+  # and we don't publish them. On the data this comes back at 0.96, well above the bar.
+  resample_times: 25
+  resample_size: 0.80
+  minimum_agreement: 0.60     # below this, don't publish. Keep the old groups and page a human.
+
+# --- Finding which products compete (src/relationships.py) ---
+relationships:
+  compare_top_n_products: 40  # comparing every pair is O(n^2); cap it at the top sellers
+  minimum_shared_weeks: 20    # need enough overlapping weeks to regress a pair
+  significance_level: 0.05    # Bonferroni-corrected across the pairs actually tested
+  minimum_effect: 0.30        # and an effect-size floor, so a link is big enough to act on

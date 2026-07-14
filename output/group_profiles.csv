@@ -1,0 +1,4 @@
+group_name,price_tier,shelf_presence,bumpiness,price_moves,growth,seasonality,shelf_trend,promo_activity,promo_share,promo_lift
+Promo leaders,0.775,43.403,0.71,0.45,0.008,0.185,-0.095,21.473,0.593,0.869
+Shrinking shelf,0.453,29.351,0.745,0.878,0.043,0.15,-1.319,11.873,0.461,-0.022
+Steady core,0.468,21.086,0.322,0.54,0.001,0.212,-0.022,4.401,0.276,0.002

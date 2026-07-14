@@ -181,13 +181,3 @@ More detail in [`docs/PRODUCTION.md`](docs/PRODUCTION.md), including why the row
 on Spark while the 353-row model stays single-node.
 
 ---
-
-## Limits, and what I'd do next
-
-**Promo lift here is a comparison, not a measurement.** It compares a product's heaviest
-promotion weeks with its quietest ones, so it can't tell whether a promotion created a sale or
-just pulled it forward from next week. A proper baseline model — what would this product have
-sold *without* the promotion — is the first thing I'd build next.
-
-**The thing I'd most like to know, and the data can't tell me:** when a product's shelf presence
-drops, is that our decision or the retailer's?
